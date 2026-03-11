@@ -27,3 +27,4 @@ This API handles all user, item and wallet based interactions.
 | **POST /currency**                           | Create a new currency                                       |
 | **DELETE /users/{userId}**                   | Delete a user                                               |
 | **DELETE /items/{itemId}**                   | Delete an item                                              |
+| **DELETE /currency/{currencyId}**            | Delete an item                                              |
