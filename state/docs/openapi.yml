@@ -35,11 +35,7 @@ paths:
       description: Get user information (username, email, create time) using ID
       operationId: getUser
       parameters:
-        - in: path
-          name: userId
-          required: true
-          schema:
-            type: number
+        - $ref: '#/components/parameters/UserIdParam'
       responses:
         200:
           description: Success
@@ -353,6 +349,71 @@ paths:
         409:
           $ref: '#/components/responses/ResourceConflict'
 
+  # Get user information/delete user
+  /item/{itemId}:
+    get:
+      tags:
+        - Items
+      summary: Get item information
+      description: Get item information (name, description) using ID
+      operationId: getItem
+      parameters:
+        - $ref: '#/components/parameters/ItemIdParam'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemResponse'
+        404:
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+        - Items
+      summary: Delete item
+      description: Delete item with given ID
+      operationId: deleteItem
+      parameters:
+        - $ref: '#/components/parameters/ItemIdParam'
+      responses:
+        204:
+          description: Successfully deleted item
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  # Create new item
+  /item:
+    post:
+      tags:
+        - Items
+      summary: Create item
+      description: Create item with provided info (name, description) and return info
+      operationId: createItem
+      requestBody:
+        description: Name and description
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateItemRequest'
+      responses:
+        201:
+          description: Item created
+          headers:
+            Location:
+              description: URL of the created item
+              schema:
+                type:
+                  string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemResponse'
+        400:
+          $ref: '#/components/responses/InvalidInput'
+        409:
+          $ref: '#/components/responses/ResourceConflict'
+
 
 
 
@@ -369,6 +430,16 @@ components:
         email:
           type: string
         createdAt:
+          type: string
+
+    ItemResponse:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        description:
           type: string
 
     WalletResponse:
@@ -482,6 +553,13 @@ components:
     UserIdParam:
       in: path
       name: userId
+      required: true
+      schema:
+        type: string
+
+    ItemIdParam:
+      in: path
+      name: itemId
       required: true
       schema:
         type: string
