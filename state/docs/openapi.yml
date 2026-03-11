@@ -349,7 +349,7 @@ paths:
         409:
           $ref: '#/components/responses/ResourceConflict'
 
-  # Get user information/delete user
+  # Get item information/delete item
   /item/{itemId}:
     get:
       tags:
@@ -414,6 +414,71 @@ paths:
         409:
           $ref: '#/components/responses/ResourceConflict'
 
+  # Get currency information/delete currency
+  /currency/{currencyId}:
+    get:
+      tags:
+        - Currencies
+      summary: Get currency information
+      description: Get currency name using ID
+      operationId: getCurrency
+      parameters:
+        - $ref: '#/components/parameters/CurrencyIdParam'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrencyResponse'
+        404:
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+        - Currencies
+      summary: Delete currency
+      description: Delete currency with given ID
+      operationId: deleteCurrency
+      parameters:
+        - $ref: '#/components/parameters/CurrencyIdParam'
+      responses:
+        204:
+          description: Successfully deleted currency
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  # Create new currency
+  /currency:
+    post:
+      tags:
+        - Currencies
+      summary: Create currency
+      description: Create currency with provided name and return info
+      operationId: createCurrency
+      requestBody:
+        description: Name
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCurrencyRequest'
+      responses:
+        201:
+          description: Currency created
+          headers:
+            Location:
+              description: URL of the created currency
+              schema:
+                type:
+                  string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrencyResponse'
+        400:
+          $ref: '#/components/responses/InvalidInput'
+        409:
+          $ref: '#/components/responses/ResourceConflict'
+
 
 
 
@@ -440,6 +505,14 @@ components:
         name:
           type: string
         description:
+          type: string
+
+    CurrencyResponse:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
           type: string
 
     WalletResponse:
@@ -560,6 +633,13 @@ components:
     ItemIdParam:
       in: path
       name: itemId
+      required: true
+      schema:
+        type: string
+
+    CurrencyIdParam:
+      in: path
+      name: currencyId
       required: true
       schema:
         type: string
