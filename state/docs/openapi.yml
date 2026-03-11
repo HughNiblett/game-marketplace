@@ -1,0 +1,727 @@
+openapi: 3.0.3
+info:
+  title: Specification for State API handling user info
+  description: |-
+    API that handles user info for a video-game marketplace. Functionality includes:
+    - Creating/getting/removing users
+    - Creating/getting/removing items
+    - Creating/getting/removing currencies
+    - Adding/removing/transferring items from inventory
+    - Adding/removing/transferring currency from wallet
+  version: 1.0-SNAPSHOT
+servers:
+  - url: http://localhost:8080/marketplace/state/v1
+tags:
+  - name: Users
+    description: User profiles (retrieve, create, update, delete)
+  - name: Wallet
+    description: Wallet balances, deposits, withdrawals, and transfers
+  - name: Inventory
+    description: Item stacks, reservations, and consumption
+  - name: Items
+    description: Item templates (catalog)
+  - name: Currencies
+    description: Currency creation/transfer
+  - name: Transfers
+    description: Cross-user currency and item movements
+
+paths:
+  # Get user information/delete user
+  /users/{userId}:
+    get:
+      tags:
+        - Users
+      summary: Get user information
+      description: Get user information (username, email, create time) using ID
+      operationId: getUser
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        404:
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+        - Users
+      summary: Delete user
+      description: Delete user with given ID
+      operationId: deleteUser
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      responses:
+        204:
+          description: Successfully deleted user
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  # Create new user
+  /users:
+    post:
+      tags:
+        - Users
+      summary: Create user
+      description: Create user with provided info (username, password, email) and return their info
+      operationId: createUser
+      requestBody:
+        description: Username, password and email
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        201:
+          description: User created
+          headers:
+            Location:
+              description: URL of the created user
+              schema:
+                type:
+                  string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        400:
+          $ref: '#/components/responses/InvalidInput'
+        409:
+          $ref: '#/components/responses/ResourceConflict'
+
+  # Get user's balances
+  /users/{userId}/wallet:
+    get:
+      tags:
+        - Users
+        - Wallet
+        - Currencies
+      summary: Get user's wallet
+      description: Get the user's wallet, consisting of balances for each currency, based on the provided userId
+      operationId: getWallet
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WalletResponse'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  # Deposit into user's wallet
+  /users/{userId}/wallet/deposit:
+    post:
+      tags:
+        - Users
+        - Wallet
+        - Currencies
+      summary: Deposit currency into wallet
+      description: Deposit the specified amount of the specified currency in the wallet of the user denoted by userId
+      operationId: depositWallet
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      requestBody:
+        description: Currency ID and amount
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WalletRequest'
+      responses:
+        204:
+          description: Deposit successful
+        400:
+          $ref: '#/components/responses/InvalidInput'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  # Withdraw from user's wallet
+  /users/{userId}/wallet/withdraw:
+    post:
+      tags:
+        - Users
+        - Wallet
+        - Currencies
+      summary: Withdraw currency from wallet
+      description: Withdraw the specified amount of the specified currency from the wallet of the user denoted by userId
+      operationId: withdrawWallet
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      requestBody:
+        description: Currency ID and amount
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WalletRequest'
+      responses:
+        204:
+          description: Withdrawal successful
+        400:
+          $ref: '#/components/responses/InvalidInput'
+        404:
+          $ref: '#/components/responses/NotFound'
+        409:
+          $ref: '#/components/responses/ResourceConflict'
+
+  # Get user's inventory
+  /users/{userId}/inventory:
+    get:
+      tags:
+        - Users
+        - Inventory
+        - Items
+      summary: Get user's inventory
+      description: Get the user's inventory, consisting of the amount of each item, based on the provided userId
+      operationId: getInventory
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryResponse'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  # Add quantity of item to user's inventory
+  /users/{userId}/inventory/add:
+    post:
+      tags:
+        - Users
+        - Inventory
+        - Items
+      summary: Add item to inventory
+      description: Add the specified amount of the specified item to the inventory of the user denoted by userId
+      operationId: addInventory
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      requestBody:
+        description: Item ID and amount
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryRequest'
+      responses:
+        204:
+          description: Item added successfully
+        400:
+          $ref: '#/components/responses/InvalidInput'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  # Remove quantity of item from user's inventory
+  /users/{userId}/inventory/remove:
+    post:
+      tags:
+        - Users
+        - Inventory
+        - Items
+      summary: Remove item from inventory
+      description: Remove the specified amount of the specified item from the inventory of the user denoted by userId
+      operationId: removeInventory
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      requestBody:
+        description: Item ID and amount
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryRequest'
+      responses:
+        204:
+          description: Item removed successfully
+        400:
+          $ref: '#/components/responses/InvalidInput'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  # Reserve quantity of item in user's inventory
+  /users/{userId}/inventory/reserve:
+    post:
+      tags:
+        - Users
+        - Inventory
+        - Items
+      summary: Reserve quantity of item
+      description: Move the specified amount of the specified item into the reserve section of the inventory of the user denoted by userId
+      operationId: reserveInventory
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      requestBody:
+        description: Item ID and amount
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryRequest'
+      responses:
+        204:
+          description: Item added successfully
+        400:
+          $ref: '#/components/responses/InvalidInput'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  # Unreserve quantity of item in user's inventory
+  /users/{userId}/inventory/unreserve:
+    post:
+      tags:
+        - Users
+        - Inventory
+        - Items
+      summary: Unreserve quantity of item
+      description: Move the specified amount of the specified item from the reserve section back to the quantity section of the inventory of the user denoted by userId
+      operationId: unreserveInventory
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      requestBody:
+        description: Item ID and amount
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryRequest'
+      responses:
+        204:
+          description: Item removed successfully
+        400:
+          $ref: '#/components/responses/InvalidInput'
+        404:
+          $ref: '#/components/responses/NotFound'
+        409:
+          $ref: '#/components/responses/ResourceConflict'
+
+  # Transfer items from one user's inventory to another
+  /inventory/transfer:
+    post:
+      tags:
+        - Users
+        - Inventory
+        - Items
+        - Transfers
+      summary: Transfer items
+      description: Transfer the specified amount of the specified item from sender to receiver
+      operationId: transferItems
+      requestBody:
+        description: Sender and receiver IDs, item ID and amount
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferItemRequest'
+      responses:
+        204:
+          description: Item transfer successful
+        400:
+          $ref: '#/components/responses/InvalidInput'
+        404:
+          $ref: '#/components/responses/NotFound'
+        409:
+          $ref: '#/components/responses/ResourceConflict'
+
+  # Transfer currency from one user's wallet to another
+  /wallet/transfer:
+    post:
+      tags:
+        - Users
+        - Wallet
+        - Currencies
+        - Transfers
+      summary: Transfer currency
+      description: Transfer the specified amount of the specified currency from sender to receiver
+      operationId: transferCurrency
+      requestBody:
+        description: Sender and receiver IDs, currency ID and amount
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferCurrencyRequest'
+      responses:
+        204:
+          description: Currency transfer successful
+        400:
+          $ref: '#/components/responses/InvalidInput'
+        404:
+          $ref: '#/components/responses/NotFound'
+        409:
+          $ref: '#/components/responses/ResourceConflict'
+
+  # Get item information/delete item
+  /items/{itemId}:
+    get:
+      tags:
+        - Items
+      summary: Get item information
+      description: Get item information (name, description) using ID
+      operationId: getItem
+      parameters:
+        - $ref: '#/components/parameters/ItemIdParam'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemResponse'
+        404:
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+        - Items
+      summary: Delete item
+      description: Delete item with given ID
+      operationId: deleteItem
+      parameters:
+        - $ref: '#/components/parameters/ItemIdParam'
+      responses:
+        204:
+          description: Successfully deleted item
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  # Create new item
+  /items:
+    post:
+      tags:
+        - Items
+      summary: Create item
+      description: Create item with provided info (name, description) and return info
+      operationId: createItem
+      requestBody:
+        description: Name and description
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateItemRequest'
+      responses:
+        201:
+          description: Item created
+          headers:
+            Location:
+              description: URL of the created item
+              schema:
+                type:
+                  string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemResponse'
+        400:
+          $ref: '#/components/responses/InvalidInput'
+        409:
+          $ref: '#/components/responses/ResourceConflict'
+
+  # Get currency information/delete currency
+  /currencies/{currencyId}:
+    get:
+      tags:
+        - Currencies
+      summary: Get currency information
+      description: Get currency name using ID
+      operationId: getCurrency
+      parameters:
+        - $ref: '#/components/parameters/CurrencyIdParam'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrencyResponse'
+        404:
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+        - Currencies
+      summary: Delete currency
+      description: Delete currency with given ID
+      operationId: deleteCurrency
+      parameters:
+        - $ref: '#/components/parameters/CurrencyIdParam'
+      responses:
+        204:
+          description: Successfully deleted currency
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  # Create new currency
+  /currencies:
+    post:
+      tags:
+        - Currencies
+      summary: Create currency
+      description: Create currency with provided name and return info
+      operationId: createCurrency
+      requestBody:
+        description: Name
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCurrencyRequest'
+      responses:
+        201:
+          description: Currency created
+          headers:
+            Location:
+              description: URL of the created currency
+              schema:
+                type:
+                  string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrencyResponse'
+        400:
+          $ref: '#/components/responses/InvalidInput'
+        409:
+          $ref: '#/components/responses/ResourceConflict'
+
+
+
+
+components:
+  schemas:
+
+    UserResponse:
+      type: object
+      required:
+        - id
+        - username
+        - email
+        - createdAt
+      properties:
+        id:
+          type: number
+        username:
+          type: string
+        email:
+          type: string
+        createdAt:
+          type: string
+
+    ItemResponse:
+      type: object
+      required:
+        - id
+        - name
+        - description
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        description:
+          type: string
+
+    CurrencyResponse:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+
+    WalletResponse:
+      type: object
+      required:
+        - userId
+        - balances
+      properties:
+        userId:
+          type: number
+        balances:
+          type: array
+          items:
+            type: object
+            required:
+              - currencyId
+              - currencyName
+              - amount
+            properties:
+              currencyId:
+                type: number
+              currencyName:
+                type: string
+              amount:
+                type: number
+
+    InventoryResponse:
+      type: object
+      required:
+        - userId
+        - inventory
+      properties:
+        userId:
+          type: number
+        inventory:
+          type: array
+          items:
+            type: object
+            required:
+              - itemId
+              - itemName
+              - amount
+            properties:
+              itemId:
+                type: number
+              itemName:
+                type: string
+              amount:
+                type: number
+
+    CreateUserRequest:
+      type: object
+      required:
+        - username
+        - password
+        - email
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+
+    CreateItemRequest:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+
+    CreateCurrencyRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+
+    WalletRequest:
+      type: object
+      required:
+        - currencyId
+        - amount
+      properties:
+        currencyId:
+          type: number
+        amount:
+          type: number
+
+    InventoryRequest:
+      type: object
+      required:
+        - itemId
+        - amount
+      properties:
+        itemId:
+          type: number
+        amount:
+          type: number
+
+    TransferCurrencyRequest:
+      type: object
+      required:
+        - senderId
+        - receiverId
+        - currencyId
+        - amount
+      properties:
+        senderId:
+          type: number
+        receiverId:
+          type: number
+        currencyId:
+          type: number
+        amount:
+          type: number
+
+    TransferItemRequest:
+      type: object
+      required:
+        - senderId
+        - receiverId
+        - itemId
+        - amount
+      properties:
+        senderId:
+          type: number
+        receiverId:
+          type: number
+        itemId:
+          type: number
+        amount:
+          type: number
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+
+  parameters:
+
+    UserIdParam:
+      in: path
+      name: userId
+      required: true
+      schema:
+        type: number
+
+    ItemIdParam:
+      in: path
+      name: itemId
+      required: true
+      schema:
+        type: number
+
+    CurrencyIdParam:
+      in: path
+      name: currencyId
+      required: true
+      schema:
+        type: number
+
+  responses:
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    InvalidInput:
+      description: Invalid input
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    ResourceConflict:
+      description: Resource conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+
