@@ -248,7 +248,7 @@ paths:
         - Users
         - Inventory
         - Items
-      summary: Add item to inventory
+      summary: Reserve quantity of item
       description: Move the specified amount of the specified item into the reserve section of the inventory of the user denoted by userId
       operationId: reserveInventory
       parameters:
@@ -274,7 +274,7 @@ paths:
         - Users
         - Inventory
         - Items
-      summary: Remove item from inventory
+      summary: Unreserve quantity of item
       description: Move the specified amount of the specified item from the reserve section back to the quantity section of the inventory of the user denoted by userId
       operationId: unreserveInventory
       parameters:
@@ -332,7 +332,7 @@ paths:
         - Transfers
       summary: Transfer currency
       description: Transfer the specified amount of the specified currency from sender to receiver
-      operationId: transferItems
+      operationId: transferCurrency
       requestBody:
         description: Sender and receiver IDs, currency ID and amount
         content:
@@ -350,7 +350,7 @@ paths:
           $ref: '#/components/responses/ResourceConflict'
 
   # Get item information/delete item
-  /item/{itemId}:
+  /items/{itemId}:
     get:
       tags:
         - Items
@@ -383,7 +383,7 @@ paths:
           $ref: '#/components/responses/NotFound'
 
   # Create new item
-  /item:
+  /items:
     post:
       tags:
         - Items
@@ -415,7 +415,7 @@ paths:
           $ref: '#/components/responses/ResourceConflict'
 
   # Get currency information/delete currency
-  /currency/{currencyId}:
+  /currencies/{currencyId}:
     get:
       tags:
         - Currencies
@@ -448,7 +448,7 @@ paths:
           $ref: '#/components/responses/NotFound'
 
   # Create new currency
-  /currency:
+  /currencies:
     post:
       tags:
         - Currencies
@@ -487,6 +487,11 @@ components:
 
     UserResponse:
       type: object
+      required:
+        - id
+        - username
+        - email
+        - createdAt
       properties:
         id:
           type: number
@@ -499,6 +504,10 @@ components:
 
     ItemResponse:
       type: object
+      required:
+        - id
+        - name
+        - description
       properties:
         id:
           type: number
@@ -509,6 +518,9 @@ components:
 
     CurrencyResponse:
       type: object
+      required:
+        - id
+        - name
       properties:
         id:
           type: number
@@ -517,6 +529,9 @@ components:
 
     WalletResponse:
       type: object
+      required:
+        - userId
+        - balances
       properties:
         userId:
           type: number
@@ -524,6 +539,10 @@ components:
           type: array
           items:
             type: object
+            required:
+              - currencyId
+              - currencyName
+              - amount
             properties:
               currencyId:
                 type: number
@@ -534,6 +553,9 @@ components:
 
     InventoryResponse:
       type: object
+      required:
+        - userId
+        - inventory
       properties:
         userId:
           type: number
@@ -541,6 +563,10 @@ components:
           type: array
           items:
             type: object
+            required:
+              - itemId
+              - itemName
+              - amount
             properties:
               itemId:
                 type: number
@@ -551,16 +577,23 @@ components:
 
     CreateUserRequest:
       type: object
+      required:
+        - username
+        - password
+        - email
       properties:
         username:
           type: string
-        passwordHash:
+        password:
           type: string
         email:
           type: string
 
     CreateItemRequest:
       type: object
+      required:
+        - name
+        - description
       properties:
         name:
           type: string
@@ -569,12 +602,17 @@ components:
 
     CreateCurrencyRequest:
       type: object
+      required:
+        - name
       properties:
         name:
           type: string
 
     WalletRequest:
       type: object
+      required:
+        - currencyId
+        - amount
       properties:
         currencyId:
           type: number
@@ -583,6 +621,9 @@ components:
 
     InventoryRequest:
       type: object
+      required:
+        - itemId
+        - amount
       properties:
         itemId:
           type: number
@@ -591,6 +632,11 @@ components:
 
     TransferCurrencyRequest:
       type: object
+      required:
+        - senderId
+        - receiverId
+        - currencyId
+        - amount
       properties:
         senderId:
           type: number
@@ -603,6 +649,11 @@ components:
 
     TransferItemRequest:
       type: object
+      required:
+        - senderId
+        - receiverId
+        - itemId
+        - amount
       properties:
         senderId:
           type: number
@@ -613,13 +664,19 @@ components:
         amount:
           type: number
 
-    GeneralError:
+    ErrorResponse:
       type: object
+      required:
+        - error
+        - message
       properties:
         error:
           type: string
         message:
           type: string
+        details:
+          type: object
+          additionalProperties: true
 
   parameters:
 
@@ -628,21 +685,21 @@ components:
       name: userId
       required: true
       schema:
-        type: string
+        type: number
 
     ItemIdParam:
       in: path
       name: itemId
       required: true
       schema:
-        type: string
+        type: number
 
     CurrencyIdParam:
       in: path
       name: currencyId
       required: true
       schema:
-        type: string
+        type: number
 
   responses:
 
@@ -651,20 +708,20 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/GeneralError'
+            $ref: '#/components/schemas/ErrorResponse'
 
     InvalidInput:
       description: Invalid input
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/GeneralError'
+            $ref: '#/components/schemas/ErrorResponse'
 
     ResourceConflict:
       description: Resource conflict
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/GeneralError'
+            $ref: '#/components/schemas/ErrorResponse'
 
 
