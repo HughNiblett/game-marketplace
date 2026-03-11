@@ -20,6 +20,8 @@ tags:
     description: Item stacks, reservations, and consumption
   - name: Items
     description: Item templates (catalog)
+  - name: Currencies
+    description: Currency creation/transfer
   - name: Transfers
     description: Cross-user currency and item movements
 
@@ -99,6 +101,7 @@ paths:
       tags:
         - Users
         - Wallet
+        - Currencies
       summary: Get user's wallet
       description: Get the user's wallet, consisting of balances for each currency, based on the provided userId
       operationId: getWallet
@@ -120,6 +123,7 @@ paths:
       tags:
         - Users
         - Wallet
+        - Currencies
       summary: Deposit currency into wallet
       description: Deposit the specified amount of the specified currency in the wallet of the user denoted by userId
       operationId: depositWallet
@@ -145,6 +149,7 @@ paths:
       tags:
         - Users
         - Wallet
+        - Currencies
       summary: Withdraw currency from wallet
       description: Withdraw the specified amount of the specified currency from the wallet of the user denoted by userId
       operationId: withdrawWallet
@@ -172,6 +177,7 @@ paths:
       tags:
         - Users
         - Inventory
+        - Items
       summary: Get user's inventory
       description: Get the user's inventory, consisting of the amount of each item, based on the provided userId
       operationId: getInventory
@@ -193,6 +199,7 @@ paths:
       tags:
         - Users
         - Inventory
+        - Items
       summary: Add item to inventory
       description: Add the specified amount of the specified item to the inventory of the user denoted by userId
       operationId: addInventory
@@ -218,6 +225,7 @@ paths:
       tags:
         - Users
         - Inventory
+        - Items
       summary: Remove item from inventory
       description: Remove the specified amount of the specified item from the inventory of the user denoted by userId
       operationId: removeInventory
@@ -243,6 +251,7 @@ paths:
       tags:
         - Users
         - Inventory
+        - Items
       summary: Add item to inventory
       description: Move the specified amount of the specified item into the reserve section of the inventory of the user denoted by userId
       operationId: reserveInventory
@@ -268,6 +277,7 @@ paths:
       tags:
         - Users
         - Inventory
+        - Items
       summary: Remove item from inventory
       description: Move the specified amount of the specified item from the reserve section back to the quantity section of the inventory of the user denoted by userId
       operationId: unreserveInventory
@@ -289,11 +299,66 @@ paths:
         409:
           $ref: '#/components/responses/ResourceConflict'
 
+  # Transfer items from one user's inventory to another
+  /inventory/transfer:
+    post:
+      tags:
+        - Users
+        - Inventory
+        - Items
+        - Transfers
+      summary: Transfer items
+      description: Transfer the specified amount of the specified item from sender to receiver
+      operationId: transferItems
+      requestBody:
+        description: Sender and receiver IDs, item ID and amount
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferItemRequest'
+      responses:
+        204:
+          description: Item transfer successful
+        400:
+          $ref: '#/components/responses/InvalidInput'
+        404:
+          $ref: '#/components/responses/NotFound'
+        409:
+          $ref: '#/components/responses/ResourceConflict'
+
+  # Transfer currency from one user's wallet to another
+  /wallet/transfer:
+    post:
+      tags:
+        - Users
+        - Wallet
+        - Currencies
+        - Transfers
+      summary: Transfer currency
+      description: Transfer the specified amount of the specified currency from sender to receiver
+      operationId: transferItems
+      requestBody:
+        description: Sender and receiver IDs, currency ID and amount
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferCurrencyRequest'
+      responses:
+        204:
+          description: Currency transfer successful
+        400:
+          $ref: '#/components/responses/InvalidInput'
+        404:
+          $ref: '#/components/responses/NotFound'
+        409:
+          $ref: '#/components/responses/ResourceConflict'
+
 
 
 
 components:
   schemas:
+
     UserResponse:
       type: object
       properties:
@@ -350,6 +415,20 @@ components:
         email:
           type: string
 
+    CreateItemRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+
+    CreateCurrencyRequest:
+      type: object
+      properties:
+        name:
+          type: string
+
     WalletRequest:
       type: object
       properties:
@@ -366,6 +445,30 @@ components:
         amount:
           type: number
 
+    TransferCurrencyRequest:
+      type: object
+      properties:
+        senderId:
+          type: number
+        receiverId:
+          type: number
+        currencyId:
+          type: number
+        amount:
+          type: number
+
+    TransferItemRequest:
+      type: object
+      properties:
+        senderId:
+          type: number
+        receiverId:
+          type: number
+        itemId:
+          type: number
+        amount:
+          type: number
+
     GeneralError:
       type: object
       properties:
@@ -375,6 +478,7 @@ components:
           type: string
 
   parameters:
+
     UserIdParam:
       in: path
       name: userId
@@ -382,8 +486,8 @@ components:
       schema:
         type: string
 
-
   responses:
+
     NotFound:
       description: Resource not found
       content:
