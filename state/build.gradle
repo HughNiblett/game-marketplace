@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.0.3'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'org.openapi.generator' version '7.20.0'
 }
 
 group = 'com.github.hughniblett.marketplace'
@@ -29,3 +30,43 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+
+
+// === OpenAPI codegen ===
+openApiGenerate {
+	generatorName = "spring"
+	inputSpec = "$projectDir/docs/openapi.yml"
+	outputDir = "$buildDir/generated/openapi"
+	apiPackage = "com.github.hughniblett.marketplace.state.controllers"
+	modelPackage = "com.github.hughniblett.marketplace.state.model"
+	invokerPackage = "com.github.hughniblett.marketplace.state.invoker"
+	// Key options:
+	configOptions = [
+			useSpringBoot4          : "true",     // Boot 4 mode (Jakarta, Springdoc)
+			useJackson3				: "true",
+			delegatePattern         : "true",     // generate Controllers + Delegate interfaces
+			useTags                 : "true",     // split APIs per tag
+			dateLibrary             : "java8",
+			library                 : "spring-boot",
+			hideGenerationTimestamp : "true",
+			openApiNullable 		: "false"
+	]
+	// Optional validation:
+	validateSpec = true
+}
+
+// Compile the generated sources
+sourceSets {
+	main {
+		java {
+			srcDir("$buildDir/generated/openapi/src/main/java")
+		}
+		resources {
+			srcDir("$buildDir/generated/openapi/src/main/resources")
+		}
+	}
+}
+
+// Make generation run before compile
+tasks.compileJava.dependsOn tasks.openApiGenerate
