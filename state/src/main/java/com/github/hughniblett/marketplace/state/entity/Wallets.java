@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Wallets {
   @EmbeddedId
-  private WalletsKey walletId;
+  private WalletsId walletsId;
 
   private int amount;
 
   public Wallets(long userId, long currencyId, int amount) {
-    this.walletId = new WalletsKey(userId, currencyId);
+    this.walletsId = new WalletsId(userId, currencyId);
     this.amount = amount;
   }
 }

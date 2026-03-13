@@ -3,7 +3,6 @@ package com.github.hughniblett.marketplace.state.repository;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import com.github.hughniblett.marketplace.state.entity.Items;
 import com.github.hughniblett.marketplace.state.entity.Users;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,9 +13,9 @@ import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabas
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class UserRepositoryTest {
+public class UsersRepositoryTest {
   @Autowired
-  private UserRepository userRepository;
+  private UsersRepository usersRepository;
 
   private Users user1;
   private Users user2;
@@ -25,20 +24,20 @@ public class UserRepositoryTest {
   void setUp() {
     user1 = new Users("johnnysins69", "definitely a hashed password", "johnathonsinnerson@sex.com");
     user2 = new Users("fortnite", "another hashed password", "fortnite@epic.com");
-    userRepository.deleteAll();
+    usersRepository.deleteAll();
   }
 
   @Test
   public void testSaveUser() {
-    Users savedUser = userRepository.save(user1);
+    Users savedUser = usersRepository.save(user1);
     assertNotNull(savedUser);
     assertEquals(savedUser.getUsername(), user1.getUsername());
   }
 
   @Test
   public void testFindAllUsers() {
-    userRepository.saveAll(List.of(user1, user2));
-    List<Users> allUsers = (List<Users>) userRepository.findAll();
+    usersRepository.saveAll(List.of(user1, user2));
+    List<Users> allUsers = (List<Users>) usersRepository.findAll();
     assertNotNull(allUsers);
     assertEquals(2, allUsers.size());
   }

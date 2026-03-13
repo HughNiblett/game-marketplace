@@ -10,13 +10,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Inventories {
   @EmbeddedId
-  private InventoriesKey walletId;
+  private InventoriesId inventoriesId;
 
   private int quantity;
   private int reserved;
 
   public Inventories(long userId, long itemId, int quantity, int reserved) {
-    this.walletId = new InventoriesKey(userId, itemId);
+    this.inventoriesId = new InventoriesId(userId, itemId);
     this.quantity = quantity;
     this.reserved = reserved;
   }
