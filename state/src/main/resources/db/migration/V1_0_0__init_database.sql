@@ -1,7 +1,7 @@
 CREATE TABLE Users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(100) NOT NULL,
-    passwordHash VARCHAR(150) NOT NULL,
+    password_hash VARCHAR(150) NOT NULL,
     email VARCHAR(100) NOT NULL,
     createdAt VARCHAR(27) NOT NULL
 );
@@ -18,20 +18,20 @@ CREATE TABLE Items (
 );
 
 CREATE TABLE Wallets (
-    userId BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
     currencyId BIGINT NOT NULL,
     amount BIGINT NOT NULL,
-    PRIMARY KEY(userId, currencyId),
-    FOREIGN KEY(userId) REFERENCES Users(id),
+    PRIMARY KEY(user_id, currencyId),
+    FOREIGN KEY(user_id) REFERENCES Users(id),
     FOREIGN KEY(currencyId) REFERENCES Currencies(id)
 );
 
 CREATE TABLE Inventories (
-   userId BIGINT NOT NULL,
-   itemId BIGINT NOT NULL,
+   user_id BIGINT NOT NULL,
+   item_id BIGINT NOT NULL,
    quantity BIGINT NOT NULL,
    reserved BIGINT NOT NULL DEFAULT 0,
-   PRIMARY KEY(userId, itemId),
-   FOREIGN KEY(userId) REFERENCES Users(id),
-   FOREIGN KEY(itemId) REFERENCES Items(id)
+   PRIMARY KEY(user_id, item_id),
+   FOREIGN KEY(user_id) REFERENCES Users(id),
+   FOREIGN KEY(item_id) REFERENCES Items(id)
 );

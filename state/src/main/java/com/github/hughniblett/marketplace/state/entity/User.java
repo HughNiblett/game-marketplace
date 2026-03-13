@@ -5,9 +5,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import java.time.OffsetDateTime;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class User {
 
   @Id
@@ -17,8 +19,6 @@ public class User {
   private String passwordHash;
   private String email;
   private OffsetDateTime createdAt;
-
-  public User() {}
 
   public User(String username, String passwordHash, String email) {
     this.username = username;
