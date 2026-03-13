@@ -2,6 +2,7 @@ package com.github.hughniblett.marketplace.state.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,16 +10,14 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Item {
+public class Currencies {
 
   @Id
-  @GeneratedValue
-  private String id;
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long id;
   private String name;
-  private String description;
 
-  public Item(String name, String description) {
+  public Currencies(String name) {
     this.name = name;
-    this.description = description;
   }
 }

@@ -11,11 +11,11 @@ import lombok.Setter;
 @Setter
 @Embeddable
 @NoArgsConstructor
-public class InventoryKey implements Serializable {
-  private Integer userId;
-  private Integer itemId;
+public class InventoriesKey implements Serializable {
+  private Long userId;
+  private Long itemId;
 
-  public InventoryKey(Integer userId, Integer itemId) {
+  public InventoriesKey(Long userId, Long itemId) {
     this.userId = userId;
     this.itemId = itemId;
   }
@@ -23,8 +23,8 @@ public class InventoryKey implements Serializable {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof InventoryKey)) return false;
-    InventoryKey that = (InventoryKey) o;
+    if (!(o instanceof InventoriesKey)) return false;
+    InventoriesKey that = (InventoriesKey) o;
     return Objects.equals(userId, that.userId)
         && Objects.equals(itemId, that.itemId);
   }

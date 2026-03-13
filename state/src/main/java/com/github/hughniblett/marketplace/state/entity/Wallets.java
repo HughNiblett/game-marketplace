@@ -8,14 +8,14 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Wallet {
+public class Wallets {
   @EmbeddedId
-  private WalletKey walletId;
+  private WalletsKey walletId;
 
   private int amount;
 
-  public Wallet(int userId, int currencyId, int amount) {
-    this.walletId = new WalletKey(userId, currencyId);
+  public Wallets(long userId, long currencyId, int amount) {
+    this.walletId = new WalletsKey(userId, currencyId);
     this.amount = amount;
   }
 }

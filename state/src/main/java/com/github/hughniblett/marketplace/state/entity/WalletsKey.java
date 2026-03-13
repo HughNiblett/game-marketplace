@@ -11,11 +11,11 @@ import lombok.Setter;
 @Setter
 @Embeddable
 @NoArgsConstructor
-public class WalletKey implements Serializable {
-  private Integer userId;
-  private Integer currencyId;
+public class WalletsKey implements Serializable {
+  private Long userId;
+  private Long currencyId;
 
-  public WalletKey(Integer userId, Integer currencyId) {
+  public WalletsKey(Long userId, Long currencyId) {
     this.userId = userId;
     this.currencyId = currencyId;
   }
@@ -23,8 +23,8 @@ public class WalletKey implements Serializable {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof WalletKey)) return false;
-    WalletKey that = (WalletKey) o;
+    if (!(o instanceof WalletsKey)) return false;
+    WalletsKey that = (WalletsKey) o;
     return Objects.equals(userId, that.userId)
         && Objects.equals(currencyId, that.currencyId);
   }

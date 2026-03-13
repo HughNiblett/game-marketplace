@@ -1,37 +1,37 @@
-CREATE TABLE Users (
+CREATE TABLE users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(100) NOT NULL,
-    password_hash VARCHAR(150) NOT NULL,
-    email VARCHAR(100) NOT NULL,
-    createdAt VARCHAR(27) NOT NULL
+    username VARCHAR(255) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    created_at DATETIME(6) NOT NULL
 );
 
-CREATE TABLE Currencies (
+CREATE TABLE currencies (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL
+    name VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE Items (
+CREATE TABLE items (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    description VARCHAR(300) NOT NULL
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE Wallets (
+CREATE TABLE wallets (
     user_id BIGINT NOT NULL,
-    currencyId BIGINT NOT NULL,
+    currency_id BIGINT NOT NULL,
     amount BIGINT NOT NULL,
-    PRIMARY KEY(user_id, currencyId),
-    FOREIGN KEY(user_id) REFERENCES Users(id),
-    FOREIGN KEY(currencyId) REFERENCES Currencies(id)
+    PRIMARY KEY(user_id, currency_id),
+    FOREIGN KEY(user_id) REFERENCES users(id),
+    FOREIGN KEY(currency_id) REFERENCES currencies(id)
 );
 
-CREATE TABLE Inventories (
+CREATE TABLE inventories (
    user_id BIGINT NOT NULL,
    item_id BIGINT NOT NULL,
    quantity BIGINT NOT NULL,
    reserved BIGINT NOT NULL DEFAULT 0,
    PRIMARY KEY(user_id, item_id),
-   FOREIGN KEY(user_id) REFERENCES Users(id),
-   FOREIGN KEY(item_id) REFERENCES Items(id)
+   FOREIGN KEY(user_id) REFERENCES users(id),
+   FOREIGN KEY(item_id) REFERENCES items(id)
 );
