@@ -17,7 +17,7 @@ CREATE TABLE Items (
     description VARCHAR(300) NOT NULL
 );
 
-CREATE TABLE Wallet (
+CREATE TABLE Wallets (
     userId BIGINT NOT NULL,
     currencyId BIGINT NOT NULL,
     amount BIGINT NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE Wallet (
     FOREIGN KEY(currencyId) REFERENCES Currencies(id)
 );
 
-CREATE TABLE Inventory (
+CREATE TABLE Inventories (
    userId BIGINT NOT NULL,
    itemId BIGINT NOT NULL,
    quantity BIGINT NOT NULL,
