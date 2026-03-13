@@ -20,8 +20,13 @@ repositories {
 }
 
 dependencies {
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'tools.jackson.core:jackson-databind'
+	runtimeOnly 'com.mysql:mysql-connector-j'
 	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
@@ -43,27 +48,23 @@ openApiGenerate {
 	invokerPackage = "com.github.hughniblett.marketplace.state.invoker"
 	// Key options:
 	configOptions = [
-			useSpringBoot4          : "true",     // Boot 4 mode (Jakarta, Springdoc)
+			useSpringBoot4          : "true",
 			useJackson3				: "true",
-			delegatePattern         : "true",     // generate Controllers + Delegate interfaces
-			useTags                 : "true",     // split APIs per tag
+			interfaceOnly         	: "true",
+			useTags                 : "true",
 			dateLibrary             : "java8",
 			library                 : "spring-boot",
 			hideGenerationTimestamp : "true",
 			openApiNullable 		: "false"
 	]
-	// Optional validation:
+
 	validateSpec = true
 }
 
-// Compile the generated sources
 sourceSets {
 	main {
 		java {
 			srcDir("$buildDir/generated/openapi/src/main/java")
-		}
-		resources {
-			srcDir("$buildDir/generated/openapi/src/main/resources")
 		}
 	}
 }
