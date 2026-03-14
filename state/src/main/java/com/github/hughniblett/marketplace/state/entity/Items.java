@@ -22,4 +22,9 @@ public class Items {
     this.name = name;
     this.description = description;
   }
+
+  @Override
+  public String toString() {
+    return String.format("Items [id=%d, name=%s, description=%s]", id, name, description);
+  }
 }

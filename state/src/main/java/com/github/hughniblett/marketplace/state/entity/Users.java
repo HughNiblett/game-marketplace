@@ -30,6 +30,6 @@ public class Users {
 
   @Override
   public String toString() {
-    return String.format("User[id=%d, username=%s, passwordHash=%s, email=%s]",  id, username, passwordHash, email);
+    return String.format("User [id=%d, username=%s, passwordHash=%s, email=%s, createdAt=%s]",  id, username, passwordHash, email, createdAt.toString());
   }
 }

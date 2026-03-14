@@ -24,4 +24,9 @@ public class InventoriesView {
     this.quantity = quantity;
     this.reserved = reserved;
   }
+
+  @Override
+  public String toString() {
+    return String.format("InventoriesView [userId=%d, itemId=%d, name=%s, quantity=%d, reserved=%d]", inventoriesId.getUserId(), inventoriesId.getItemId(), name, quantity, reserved);
+  }
 }

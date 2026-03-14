@@ -22,4 +22,9 @@ public class WalletsView {
     this.name = name;
     this.amount = amount;
   }
+
+  @Override
+  public String toString() {
+    return String.format("WalletsView [userId=%d, currencyId=%d, name=%s, amount=%d]", walletsId.getUserId(), walletsId.getCurrencyId(), name, amount);
+  }
 }
