@@ -1,4 +1,4 @@
-package com.github.hughniblett.marketplace.state.entity;
+package com.github.hughniblett.marketplace.state.entity.id;
 
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
@@ -11,26 +11,26 @@ import lombok.Setter;
 @Setter
 @Embeddable
 @NoArgsConstructor
-public class WalletsId implements Serializable {
+public class InventoriesId implements Serializable {
   private Long userId;
-  private Long currencyId;
+  private Long itemId;
 
-  public WalletsId(Long userId, Long currencyId) {
+  public InventoriesId(Long userId, Long itemId) {
     this.userId = userId;
-    this.currencyId = currencyId;
+    this.itemId = itemId;
   }
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof WalletsId)) return false;
-    WalletsId that = (WalletsId) o;
+    if (!(o instanceof InventoriesId)) return false;
+    InventoriesId that = (InventoriesId) o;
     return Objects.equals(userId, that.userId)
-        && Objects.equals(currencyId, that.currencyId);
+        && Objects.equals(itemId, that.itemId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(userId, currencyId);
+    return Objects.hash(userId, itemId);
   }
 }

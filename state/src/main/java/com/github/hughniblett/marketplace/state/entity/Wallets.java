@@ -1,5 +1,6 @@
 package com.github.hughniblett.marketplace.state.entity;
 
+import com.github.hughniblett.marketplace.state.entity.id.WalletsId;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import lombok.Getter;
