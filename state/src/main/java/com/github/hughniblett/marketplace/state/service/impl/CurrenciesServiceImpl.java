@@ -1,0 +1,34 @@
+package com.github.hughniblett.marketplace.state.service.impl;
+
+import com.github.hughniblett.marketplace.state.entity.Currencies;
+import com.github.hughniblett.marketplace.state.model.CreateCurrencyRequest;
+import com.github.hughniblett.marketplace.state.model.CurrencyResponse;
+import com.github.hughniblett.marketplace.state.repository.CurrenciesRepository;
+import com.github.hughniblett.marketplace.state.service.CurrenciesService;
+import java.math.BigDecimal;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class CurrenciesServiceImpl implements CurrenciesService {
+  private final CurrenciesRepository currenciesRepository;
+
+  public ResponseEntity<CurrencyResponse> getCurrency(BigDecimal currencyId) {
+    long currencyIdLong = currencyId.longValue();
+    Currencies currency = currenciesRepository.findById(currencyIdLong);
+    CurrencyResponse currencyResponse = new CurrencyResponse(new BigDecimal(currency.getId()), currency.getName());
+    return ResponseEntity.ok(currencyResponse);
+  }
+
+  public ResponseEntity<CurrencyResponse> createCurrency(CreateCurrencyRequest createCurrencyRequest) {
+    Currencies currency = currenciesRepository.save(new Currencies(createCurrencyRequest.getName()));
+    CurrencyResponse currencyResponse = new CurrencyResponse(new BigDecimal(currency.getId()), currency.getName());
+    return ResponseEntity.ok(currencyResponse);
+  }
+
+  public ResponseEntity<Void> deleteCurrency(BigDecimal currencyId) {
+    return null;
+  }
+}
