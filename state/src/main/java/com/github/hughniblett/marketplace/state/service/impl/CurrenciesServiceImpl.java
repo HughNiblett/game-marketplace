@@ -6,12 +6,14 @@ import com.github.hughniblett.marketplace.state.model.CurrencyResponse;
 import com.github.hughniblett.marketplace.state.repository.CurrenciesRepository;
 import com.github.hughniblett.marketplace.state.repository.WalletsRepository;
 import com.github.hughniblett.marketplace.state.service.CurrenciesService;
+import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CurrenciesServiceImpl implements CurrenciesService {
   private final CurrenciesRepository currenciesRepository;
