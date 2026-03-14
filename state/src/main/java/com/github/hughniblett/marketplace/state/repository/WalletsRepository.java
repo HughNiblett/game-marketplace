@@ -8,4 +8,5 @@ import org.springframework.data.repository.CrudRepository;
 public interface WalletsRepository extends CrudRepository<Wallets, WalletsId> {
   List<Wallets> findByWalletsIdUserId(Long userId);
 
+  long deleteByWalletsIdCurrencyId(Long currencyId);
 }

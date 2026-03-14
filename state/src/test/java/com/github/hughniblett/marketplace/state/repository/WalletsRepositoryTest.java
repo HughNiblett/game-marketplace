@@ -26,7 +26,8 @@ public class WalletsRepositoryTest {
   @Autowired
   private CurrenciesRepository currenciesRepository;
 
-  private Users user;
+  private Users user1;
+  private Users user2;
   private Currencies currency1;
   private Currencies currency2;
 
@@ -36,25 +37,26 @@ public class WalletsRepositoryTest {
     usersRepository.deleteAll();
     currenciesRepository.deleteAll();
 
-    user = usersRepository.save(new Users("player1", "hashed_pw", "player1@game.com"));
+    user1 = usersRepository.save(new Users("player1", "hashed_pw", "player1@game.com"));
+    user2 = usersRepository.save(new Users("player2", "hashed_pw", "player2@game.com"));
     currency1 = currenciesRepository.save(new Currencies("Gold"));
     currency2 = currenciesRepository.save(new Currencies("Silver"));
   }
 
   @Test
   public void testSaveWallet() {
-    Wallets wallet = new Wallets(user.getId(), currency1.getId(), 100);
+    Wallets wallet = new Wallets(user1.getId(), currency1.getId(), 100);
     Wallets saved = walletsRepository.save(wallet);
     assertNotNull(saved);
     assertEquals(100, saved.getAmount());
-    assertEquals(user.getId(), saved.getWalletsId().getUserId());
+    assertEquals(user1.getId(), saved.getWalletsId().getUserId());
     assertEquals(currency1.getId(), saved.getWalletsId().getCurrencyId());
   }
 
   @Test
   public void testFindAllWallets() {
-    walletsRepository.save(new Wallets(user.getId(), currency1.getId(), 100));
-    walletsRepository.save(new Wallets(user.getId(), currency2.getId(), 50));
+    walletsRepository.save(new Wallets(user1.getId(), currency1.getId(), 100));
+    walletsRepository.save(new Wallets(user1.getId(), currency2.getId(), 50));
     List<Wallets> all = (List<Wallets>) walletsRepository.findAll();
     assertNotNull(all);
     assertEquals(2, all.size());
@@ -62,27 +64,37 @@ public class WalletsRepositoryTest {
 
   @Test
   public void testFindByWalletsIdUserId() {
-    walletsRepository.save(new Wallets(user.getId(), currency1.getId(), 100));
-    walletsRepository.save(new Wallets(user.getId(), currency2.getId(), 50));
-    List<Wallets> userWallets = walletsRepository.findByWalletsIdUserId(user.getId());
+    walletsRepository.save(new Wallets(user1.getId(), currency1.getId(), 100));
+    walletsRepository.save(new Wallets(user1.getId(), currency2.getId(), 50));
+    List<Wallets> userWallets = walletsRepository.findByWalletsIdUserId(user1.getId());
     assertNotNull(userWallets);
     assertEquals(2, userWallets.size());
-    assertTrue(userWallets.stream().allMatch(w -> w.getWalletsId().getUserId().equals(user.getId())));
+    assertTrue(userWallets.stream().allMatch(w -> w.getWalletsId().getUserId().equals(user1.getId())));
   }
 
   @Test
   public void testFindById() {
-    walletsRepository.save(new Wallets(user.getId(), currency1.getId(), 200));
-    WalletsId id = new WalletsId(user.getId(), currency1.getId());
+    walletsRepository.save(new Wallets(user1.getId(), currency1.getId(), 200));
+    WalletsId id = new WalletsId(user1.getId(), currency1.getId());
     assertTrue(walletsRepository.findById(id).isPresent());
     assertEquals(200, walletsRepository.findById(id).get().getAmount());
   }
 
   @Test
   public void testDeleteWallet() {
-    Wallets saved = walletsRepository.save(new Wallets(user.getId(), currency1.getId(), 100));
+    Wallets saved = walletsRepository.save(new Wallets(user1.getId(), currency1.getId(), 100));
     walletsRepository.delete(saved);
     assertFalse(walletsRepository.existsById(saved.getWalletsId()));
+  }
+
+  @Test
+  public void testDeleteByCurrencyId() {
+    walletsRepository.save(new Wallets(user1.getId(), currency1.getId(), 100));
+    walletsRepository.save(new Wallets(user1.getId(), currency2.getId(), 50));
+    walletsRepository.save(new Wallets(user2.getId(), currency1.getId(), 200));
+    walletsRepository.save(new Wallets(user2.getId(), currency2.getId(), 30));
+    long amountDeleted = walletsRepository.deleteByWalletsIdCurrencyId(currency1.getId());
+    assertEquals(2, amountDeleted);
   }
 }
 
