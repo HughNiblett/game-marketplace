@@ -19,4 +19,9 @@ public class Wallets {
     this.walletsId = new WalletsId(userId, currencyId);
     this.amount = amount;
   }
+
+  @Override
+  public String toString() {
+    return String.format("Wallets [userId=%d, currencyId=%d, amount=%d]", walletsId.getUserId(), walletsId.getCurrencyId(), amount);
+  }
 }
