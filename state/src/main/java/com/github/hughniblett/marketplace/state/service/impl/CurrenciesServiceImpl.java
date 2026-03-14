@@ -4,6 +4,7 @@ import com.github.hughniblett.marketplace.state.entity.Currencies;
 import com.github.hughniblett.marketplace.state.model.CreateCurrencyRequest;
 import com.github.hughniblett.marketplace.state.model.CurrencyResponse;
 import com.github.hughniblett.marketplace.state.repository.CurrenciesRepository;
+import com.github.hughniblett.marketplace.state.repository.WalletsRepository;
 import com.github.hughniblett.marketplace.state.service.CurrenciesService;
 import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CurrenciesServiceImpl implements CurrenciesService {
   private final CurrenciesRepository currenciesRepository;
+  private final WalletsRepository walletsRepository;
 
   public ResponseEntity<CurrencyResponse> getCurrency(BigDecimal currencyId) {
     long currencyIdLong = currencyId.longValue();
@@ -29,6 +31,9 @@ public class CurrenciesServiceImpl implements CurrenciesService {
   }
 
   public ResponseEntity<Void> deleteCurrency(BigDecimal currencyId) {
-    return null;
+    long currencyIdLong = currencyId.longValue();
+    walletsRepository.deleteByWalletsIdCurrencyId(currencyIdLong);
+    currenciesRepository.deleteById(currencyIdLong);
+    return ResponseEntity.ok().build();
   }
 }
