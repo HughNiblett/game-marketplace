@@ -1,4 +1,4 @@
-package com.github.hughniblett.marketplace.state.entity;
+package com.github.hughniblett.marketplace.state.entity.id;
 
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
@@ -11,11 +11,11 @@ import lombok.Setter;
 @Setter
 @Embeddable
 @NoArgsConstructor
-public class InventoryKey implements Serializable {
-  private Integer userId;
-  private Integer itemId;
+public class InventoriesId implements Serializable {
+  private Long userId;
+  private Long itemId;
 
-  public InventoryKey(Integer userId, Integer itemId) {
+  public InventoriesId(Long userId, Long itemId) {
     this.userId = userId;
     this.itemId = itemId;
   }
@@ -23,8 +23,8 @@ public class InventoryKey implements Serializable {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof InventoryKey)) return false;
-    InventoryKey that = (InventoryKey) o;
+    if (!(o instanceof InventoriesId)) return false;
+    InventoriesId that = (InventoriesId) o;
     return Objects.equals(userId, that.userId)
         && Objects.equals(itemId, that.itemId);
   }
