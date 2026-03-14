@@ -14,13 +14,13 @@ public class InventoriesView {
 
   @EmbeddedId
   private InventoriesId inventoriesId;
-  private String itemName;
+  private String name;
   private int quantity;
   private Integer reserved;
 
-  public InventoriesView(InventoriesId inventoriesId, String itemName, int quantity, Integer reserved) {
+  public InventoriesView(InventoriesId inventoriesId, String name, int quantity, Integer reserved) {
     this.inventoriesId = inventoriesId;
-    this.itemName = itemName;
+    this.name = name;
     this.quantity = quantity;
     this.reserved = reserved;
   }
